@@ -1,0 +1,22 @@
+{
+	"name": "remoteworkmailgenerator",
+	"version": "1.0.0",
+	"description": "Manage your remote work at PSMM",
+	"main": "index.js",
+	"author": "rearwindowsoda",
+	"license": "MIT",
+	"devDependencies": {
+		"del": "^7.0.0",
+		"gulp": "4.0.0",
+		"gulp-autoprefixer": "7.0.0",
+		"gulp-clean-css": "^4.3.0",
+		"gulp-htmlmin": "^5.0.1",
+		"gulp-sass": "^5.1.0",
+		"gulp-uglify": "^3.0.2",
+		"run-sequence": "^2.2.1"
+	},
+	"scripts": {
+		"start-lite-server": "lite-server",
+		"build": "gulp"
+	}
+}

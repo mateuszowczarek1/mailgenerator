@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Praca zdalna - generator maili</title>
+		<script defer src="script.js"></script>
+		<script defer src="conversion_time.js"></script>
+		<script defer src="clipboard.mjs" type="module"></script>
+		<script type="module">
+			import getLinks from "./links.js";
+			import refreshPage from "./refresh.js";
+			import { showNote } from "./notes.js";
+			getLinks();
+			showNote();
+			refreshPage();
+		</script>
+		<link rel="stylesheet" href="https://bootswatch.com/5/quartz/bootstrap.min.css" />
+		<link rel="shortcut icon" href="src/favicon.ico" type="image/x-icon" />
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+			<a class="navbar-brand" href="/">Remote PSMM</a>
+		</nav>
+
+		<div class="container">
+			<h2>Cześć,</h2>
+			<p>
+				Zebrałem najpotrzebniejsze linki do naszej pracy zdalnej. Dodatkowo
+				strona pozwala na półautomatyczne generowanie treści maili wysyłanych na
+				koniec i początek pracy, a także na zliczanie minut konwersji i
+				tworzenia krótkich notatek.
+			</p>
+			<p>
+				Data w treściach maili zmienia się automatycznie po północy, licznik
+				konwersji i notatka zapisywane są w pamięci przeglądarki i będą dalej
+				widoczne po odświeżeniu strony, wyłączeniu przeglądarki, restarcie
+				komputera (aż do manualnego usunięcia). ✨
+			</p>
+			<p>
+				Kliknij w przycisk poniżej, żeby obejrzeć instrukcję korzystania ze
+				strony.
+			</p>
+			<p>
+				<a href="#video" class="btn btn-primary btn-small"
+					>Zobacz instrukcję »</a
+				>
+			</p>
+		</div>
+		<class class="d-flex flex-row justify-content-center flex-wrap">
+			<div class="mx-2 my-2 card p-3">
+				<div>
+					<h3>Rozpoczęcie pracy zdalnej</h3>
+					<p class="subject .text-primary-emphasis fw-bold">
+						Temat maila: Rozpoczęcie pracy zdalnej -
+						<span class="work-start-date"></span> r. -
+						<span class="your-name"></span>
+					</p>
+				</div>
+				<div id="start-mail">
+					Dzień dobry,<br />
+					informuję o rozpoczęciu pracy zdalnej w dniu:
+					<span class="work-start-date .text-primary-emphasis fw-bold fw-bold"></span> r.
+					<br />
+					Godzina rozpoczęcia: <span id="hour-start-mail"></span>
+					<br />
+					Łączę wyrazy szacunku, <br />
+					<span class="your-name .text-primary-emphasis fw-bold"></span>
+				</div>
+				<form id="inject-form">
+					<div class="form-group">
+						<label class="form-label mt-4"
+							>Twoje imię:
+							<input
+								type="text"
+								class="form-control"
+								name="name"
+								placeholder="Twoje imię"
+							/>
+							<small class="form-text text-muted"
+								>Wpisz tu imię i nazwisko.</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="form-label mt-4"
+							>Godzina rozpoczęcia pracy:
+							<input
+								type="text"
+								name="hour-start"
+								class="form-control"
+								placeholder="21:00"
+							/>
+							<small class="form-text text-muted"
+								>Wpisz godzinę w formacie HH:MM</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="form-label mt-4">
+							Adres e-mail lidera zmiany:
+							<input
+								type="text"
+								class="form-control"
+								name="leader-mail-start"
+							/>
+							<small class="form-text text-muted"
+								>Podaj adres lidera zmiany, np.: a@example.com.</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary my-2">
+							Generuj treść maila
+						</button>
+						<button
+							id="button-copy-start"
+							class="btn btn-primary my-2"
+							disabled
+						>
+							Kopiuj do schowka
+						</button>
+					</div>
+					<div class="form-group">
+						<p class="copied text-success-emphasis fw-bold" id="p-start"></p>
+						<p id="send-link-start"></p>
+					</div>
+				</form>
+			</div>
+
+			<div class="mx-2 my-2 card p-3">
+				<div>
+					<h3>Zakończenie pracy zdalnej</h3>
+					<p class="subject .text-primary-emphasis fw-bold">
+						Temat maila: Zakończenie pracy zdalnej -
+						<span class="work-end-date fw-bold"></span> r. -
+						<span class="your-name-end fw-bold"></span>
+					</p>
+				</div>
+				<div id="end-mail">
+					Dzień dobry,<br />
+					informuję o zakończeniu pracy zdalnej w dniu:
+					<span class="work-end-date .text-primary-emphasis fw-bold"></span> r.
+					<br />
+					Godziny pracy: <span id="hour-end-mail" class=".text-primary-emphasis fw-bold"></span>
+					<br />
+					<span id="conversion" class=".text-primary-emphasis fw-bold"></span>
+					Łączę wyrazy szacunku, <br />
+					<span class="your-name-end .text-primary-emphasis fw-bold"></span>
+				</div>
+				<form id="inject-form-end">
+					<div class="form-group">
+						<label class="form-label mt-4"
+							>Twoje imię:
+							<input
+								type="text"
+								class="form-control"
+								name="name-end"
+								placeholder="Twoje imię"
+							/>
+							<small class="form-text text-muted"
+								>Wpisz tu imię i nazwisko.</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="form-label mt-4">
+							Godziny pracy:
+							<input
+								type="text"
+								class="form-control"
+								name="hour-end"
+								placeholder="21:00-05:00"
+							/>
+							<small class="form-text text-muted"
+								>Wpisz godziny w formacie HH:MM-HH:MM</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="form-label mt-4">
+							Czas konwersji:
+							<input
+								type="text"
+								class="form-control"
+								name="conversion"
+								id="conversion-mail-input"
+							/>
+							<small class="form-text text-muted"
+								>Wpisz czas w formacie HH:MM</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<label class="fom-label mt-4">
+							Adres e-mail lidera zmiany:
+							<input type="text" class="form-control" name="leader-mail-end" />
+							<small class="form-text text-muted"
+								>Podaj adres lidera zmiany, np.: a@example.com.</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary my-2">
+							Generuj treść maila
+						</button>
+						<button
+							id="button-copy-end"
+							class="btn btn-primary my-2"
+							disabled
+						>
+							Kopiuj do schowka
+						</button>
+					</div>
+					<div class="form-group">
+						<p class="copied text-success-emphasis fw-bold" id="p-end"></p>
+						<p id="send-link-end"></p>
+					</div>
+				</form>
+			</div>
+			<div class="mx-2 my-2 card p-3">
+				<div>
+					<h3>Konwersja</h3>
+				</div>
+				<div>
+					<p class="subject">
+						<strong
+							>Całkowity czas konwersji:
+							<span id="conversion-sum-span" class=" .text-primary-emphasis fw-bold"></span
+						></strong>
+					</p>
+				</div>
+
+				<form id="add-minutes-form">
+					<div class="form-group">
+						<label class="form-label mt-4">
+							Dodaj liczbę minut konwersji
+							<input
+								type="number"
+								required
+								min="1"
+								id="add-minutes-input"
+								class="form-control"
+							/>
+							<small class="form-text text-muted"
+								>Wpisz liczbę minut formacie MM</small
+							>
+						</label>
+					</div>
+					<div class="form-group">
+						<button class="btn btn-info my-2">Dodaj</button>
+						<button id="reset-button" class="btn btn-warning my-2">
+							Resetuj licznik
+						</button>
+					</div>
+				</form>
+			</div>
+			<div class="mx-2 my-2 card p-3">
+				<div><h3>Linki</h3></div>
+				<div>
+					<ul id="links" style="list-style: none"></ul>
+				</div>
+			</div>
+			<div class="mx-2 my-2 card p-3">
+				<div><h3>Notatki</h3></div>
+				<div
+					id="notes"
+					class="text-warning text-wrap"
+					style="
+						max-width: 53vw;
+						text-align: left;
+						word-wrap: break-word;
+						hyphens: auto;
+						margin-bottom: 1vw;
+					"
+				></div>
+				<form>
+					<div class="form-group ">
+						<label class="form-label mt-4">
+							<textarea
+								id="notes-textarea"
+								cols="15"
+								rows="5"
+								class="form-control"
+							>
+Wpisz tekst, który chcesz zachować.</textarea
+							>
+							<small class="form-text text-muted"
+								>Możesz wydłużyć pole, jeżeli zabraknie ci miejsca. Przeciągnij
+								myszką prawy dolny róg w dół.
+							</small>
+						</label>
+					</div>
+					<div class="form-group ">
+						<button id="save-note" class="btn btn-info my-2">
+							Zapisz notatkę
+						</button>
+						<button id="delete-note" class="btn btn-warning my-2">
+							Usuń notatkę
+						</button>
+					</div>
+				</form>
+			</div>
+			<div id="video" class="mx-2 my-2 card p-3">
+				<div>
+					<h3>Instrukcja</h3>
+					<p class="text-warning">Może być już trochę nieaktualna...😭</p>
+				</div>
+				<video controls width="450">
+					<source src="/src/instruction.webm" type="video/webm" />
+
+					Pobierz video
+					<a href="/src/instruction.webm">WEBM</a>
+				</video>
+			</div>
+		</class>
+	</body>
+</html>
