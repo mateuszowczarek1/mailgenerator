@@ -10,14 +10,7 @@
 		<script defer src="conversion_time.js"></script>
 		<script defer src="clipboard.mjs" type="module"></script>
 		<script type="module">
-			import getLinks from "./links.js";
-			import refreshPage from "./refresh.js";
-			import { showNote } from "./notes.js";
-			getLinks();
-			showNote();
-			refreshPage();
-		</script>
-		<script>
+			
 window.addEventListener('load', () => {
 	registerSW();
 });
@@ -61,8 +54,13 @@ async function registerSW() {
 		}
 	}
 }
+			import getLinks from "./links.js";
+			import refreshPage from "./refresh.js";
+			import { showNote } from "./notes.js";
+			getLinks();
+			showNote();
+			refreshPage();
 		</script>
-
 		<link rel="stylesheet" href="https://bootswatch.com/5/quartz/bootstrap.min.css" />
 		<link rel="shortcut icon" href="src/favicon.ico" type="image/x-icon" />
 	</head>
