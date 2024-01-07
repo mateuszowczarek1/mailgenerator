@@ -36,8 +36,14 @@ gulp.task('move-links', () => {
 	.pipe(gulp.dest('dist'));
 })
 
+gulp.task('move-manifest', () => {
+	return gulp.src('manifest.json')
+	.pipe(gulp.dest('dist'));
+})
+
+
 gulp.task('move-src', () => {
 	return gulp.src('src/**/*.*')
 	.pipe(gulp.dest('dist/src'));
 })
-gulp.task('default', gulp.series('uglify', 'uglify-mjs', 'minify-html', 'minify-css', 'move-links', 'move-src'));
+gulp.task('default', gulp.series('uglify', 'uglify-mjs', 'minify-html', 'minify-css', 'move-links', 'move-manifest', 'move-src'));
