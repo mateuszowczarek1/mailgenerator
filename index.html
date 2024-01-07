@@ -18,16 +18,51 @@
 			refreshPage();
 		</script>
 		<script>
-			 if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered with scope:', registration.scope);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
-        });
-    }
+window.addEventListener('load', () => {
+	registerSW();
+});
+
+let installEvent;
+const installButton = document.querySelector('#install-button');
+if (
+	localStorage.getItem('install') === null &&
+	navigator.userAgent.includes('Chrome')
+) {
+	installButton.style.display = 'inline-block';
+} else {
+	installButton.style.display = 'none';
+}
+window.addEventListener('beforeinstallprompt', (e) => {
+	e.preventDefault();
+	installEvent = e;
+});
+
+installButton.addEventListener('click', () => {
+	installEvent.prompt();
+	installEvent.userChoice.then((choice) => {
+		if (choice.outcome !== 'accepted') {
+			localStorage.setItem('install', 'reject');
+			installButton.style.display = 'none';
+		} else {
+			localStorage.setItem('install', 'accepted');
+			installButton.style.display = 'none';
+			installEvent = null;
+		}
+	});
+});
+
+async function registerSW() {
+	if ('serviceWorker' in navigator) {
+		try {
+			await navigator.serviceWorker.register('./sw.js');
+		} catch (e) {
+			console.log(`SW registration failed.`);
+			console.error(e);
+		}
+	}
+}
 		</script>
+
 		<link rel="stylesheet" href="https://bootswatch.com/5/quartz/bootstrap.min.css" />
 		<link rel="shortcut icon" href="src/favicon.ico" type="image/x-icon" />
 	</head>
@@ -327,5 +362,8 @@ Wpisz tekst, który chcesz zachować.</textarea
 				</video>
 			</div>
 		</class>
+		<footer>
+			<button class="btn btn-outline-secondary" id="install-button">Zainstaluj stronę</button>
+		</footer>
 	</body>
 </html>

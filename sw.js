@@ -1,5 +1,5 @@
-const CACHE_NAME = 'mailgeneratorappcache';
-const urlsToCache = [
+const cacheName = 'mailgeneratorappcache';
+const staticAssets = [
     'clipboard.mjs',
     'conversion_time.js',
     'index.html',
@@ -8,43 +8,46 @@ const urlsToCache = [
     'notes.js',
     'refresh.js',
     'script.js',
-    '/src/'
-  ];
+    'src/instruction.webm',
+    'src/favicon.ico',
+    'src/pdfs/imagrmagick.md',
+    'src/pdfs/regexp.md',
+    'src/icons/512.png',
+];
+  self.addEventListener('install', async (e) => {
+	const cache = await caches.open(cacheName);
+	await cache.addAll(staticAssets);
+	return self.skipWaiting();
+});
 
-  self.addEventListener('install', (event) => {
-    event.waitUntil(
-      caches.open(CACHE_NAME)
-        .then((cache) => {
-          return cache.addAll(urlsToCache);
-        })
-    );
-  });
+self.addEventListener('activate', (e) => {
+	self.clients.claim();
+});
 
+self.addEventListener('fetch', async (e) => {
+	const req = e.request;
+	const url = new URL(req.url);
+	if (url.origin === location.origin) {
+		e.respondWith(cacheFirst(req));
+	} else {
+		e.respondWith(networkAndCache(req));
+	}
+});
 
-  self.addEventListener('fetch', (event) => {
-    event.respondWith(
-      caches.match(event.request)
-        .then((response) => {
+async function cacheFirst(req) {
+	const cache = await caches.open(cacheName);
+	const cached = await cache.match(req);
+	return cached || fetch(req);
+}
 
-          if (response) {
-            return response;
-          }
-  
-          return fetch(event.request).then((response) => {
-            
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-  
-            const responseToCache = response.clone();
-  
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-  
-            return response;
-          });
-        })
-    );
-  });
+async function networkAndCache(req) {
+	const cache = await caches.open(cacheName);
+	try {
+		const fresh = await fetch(req);
+		await cache.put(req, fresh.clone());
+		return fresh;
+	} catch (e) {
+		const cached = await cache.match(req);
+		return cached;
+	}
+}
