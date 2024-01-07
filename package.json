@@ -16,7 +16,7 @@
 		"run-sequence": "^2.2.1"
 	},
 	"scripts": {
-		"start-lite-server": "lite-server",
+		"start-lite-server": "npx lite-server",
 		"build": "gulp"
 	}
 }

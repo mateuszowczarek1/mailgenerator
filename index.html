@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pl">
 	<head>
+		<link rel="manifest" href="manifest.json" />
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,6 +16,17 @@
 			getLinks();
 			showNote();
 			refreshPage();
+		</script>
+		<script>
+			 if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
 		</script>
 		<link rel="stylesheet" href="https://bootswatch.com/5/quartz/bootstrap.min.css" />
 		<link rel="shortcut icon" href="src/favicon.ico" type="image/x-icon" />
