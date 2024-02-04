@@ -6,6 +6,7 @@ const staticAssets = [
     'links.js',
     'links.json',
     'notes.js',
+	'sw.js',
     'refresh.js',
     'script.js',
     'src/favicon.ico',
