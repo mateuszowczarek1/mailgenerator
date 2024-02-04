@@ -9,7 +9,6 @@ const staticAssets = [
 	'sw.js',
     'refresh.js',
     'script.js',
-    'src/instruction.webm',
     'src/favicon.ico',
     'src/pdfs/imagrmagick.md',
     'src/pdfs/regexp.md',
